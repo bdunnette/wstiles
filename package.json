@@ -9,6 +9,9 @@
   "author": "Brian Dunnette <dunn0172@umn.edu>",
   "license": "MIT",
   "dependencies": {
+    "commander": "^2.9.0",
+    "confidence": "^1.4.2",
+    "fs-readdir-recursive": "^1.0.0",
     "good": "^6.4.0",
     "good-console": "^5.2.0",
     "hapi": "^11.1.4",
