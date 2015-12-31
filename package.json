@@ -1,0 +1,17 @@
+{
+  "name": "wstiles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brian Dunnette <dunn0172@umn.edu>",
+  "license": "MIT",
+  "dependencies": {
+    "good": "^6.4.0",
+    "good-console": "^5.2.0",
+    "hapi": "^11.1.4",
+    "sqlite3": "^3.1.1"
+  }
+}
