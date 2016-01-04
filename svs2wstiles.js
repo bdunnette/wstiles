@@ -8,6 +8,9 @@ var fs = require('fs'),
 
 program.parse(process.argv);
 
+// Still need to add code to run vips & generate tiles, along the lines of:
+// vips dzsave $s $i.zip --overlap 0 --layout google --centre
+
 program.args.forEach(function(imgDir) {
   var dir = path.parse(imgDir);
   var db = new sqlite3.Database(dir.name + '.wstiles');
