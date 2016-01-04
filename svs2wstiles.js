@@ -11,6 +11,10 @@ program.parse(process.argv);
 // Still need to add code to run vips & generate tiles, along the lines of:
 // vips dzsave $s $i.zip --overlap 0 --layout google --centre
 
+// May also be useful to get image dimensions - shell code example:
+// width=`vips im_header_int Xsize $s`
+// height=`vips im_header_int Ysize $s`
+
 program.args.forEach(function(imgDir) {
   var dir = path.parse(imgDir);
   var db = new sqlite3.Database(dir.name + '.wstiles');
