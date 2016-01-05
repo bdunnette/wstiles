@@ -9,7 +9,7 @@ var fs = require('fs'),
 program.parse(process.argv);
 
 // Still need to add code to run vips & generate tiles, along the lines of:
-// vips dzsave $s $i.zip --overlap 0 --layout google --centre
+// vips dzsave example.svs example --overlap 0 --layout google --centre
 
 // May also be useful to get image dimensions - shell code example:
 // width=`vips im_header_int Xsize $s`
@@ -18,30 +18,39 @@ program.parse(process.argv);
 program.args.forEach(function(imgDir) {
   var dir = path.parse(imgDir);
   var db = new sqlite3.Database(dir.name + '.wstiles');
+  db.run("PRAGMA synchronous=OFF");
+
   db.run("DROP TABLE metadata", function(error) {
     console.error(error);
     db.run("CREATE TABLE metadata (name text, value text)", function(error) {
       console.error(error);
+      db.run("create unique index name on metadata (name)");
       db.run("INSERT INTO metadata VALUES (?, ?)", ['name', dir.name]);
       db.run("INSERT INTO metadata VALUES (?, ?)", ['minzoom', 0]);
       db.run("INSERT INTO metadata VALUES (?, ?)", ['maxzoom', 8]);
       db.run("INSERT INTO metadata VALUES (?, ?)", ['format', 'jpg']);
     });
   });
-  
+
   db.run("DROP TABLE tiles", function(error) {
     console.error(error);
-    db.run("CREATE TABLE tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob)", function() {
+    db.run("CREATE TABLE tiles (zoom_level integer, tile_row integer, tile_column integer, tile_data blob)", function() {
+      // db.run("BEGIN TRANSACTION");
       var tiles = read(path.normalize(imgDir));
       var stmt = db.prepare("INSERT INTO tiles VALUES (?, ?, ?, ?)");
       tiles.forEach(function(tileFile) {
-        console.log(tileFile);
+        // console.log(tileFile);
+        var tileData = fs.readFileSync(path.join(imgDir, tileFile));
+        // console.log(tileData);
         var tileFileSplit = tileFile.split(path.sep);
-        console.log(tileFileSplit);
+        // console.log(tileFileSplit);
         if (tileFileSplit.length > 1) {
-          stmt.run(tileFileSplit[0], tileFileSplit[1], tileFileSplit[2].split('.')[0], null);
+          stmt.run(tileFileSplit[0], tileFileSplit[1], tileFileSplit[2].split('.')[0], tileData);
         }
       })
+      // db.run("COMMIT");
     });
   });
+
+  db.close();
 });
