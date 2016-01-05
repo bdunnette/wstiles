@@ -35,6 +35,7 @@ program.args.forEach(function(imgDir) {
   db.run("DROP TABLE tiles", function(error) {
     console.error(error);
     db.run("CREATE TABLE tiles (zoom_level integer, tile_row integer, tile_column integer, tile_data blob)", function() {
+      db.run("create unique index tile_index on tiles (zoom_level, tile_column, tile_row)");
       // db.run("BEGIN TRANSACTION");
       var tiles = read(path.normalize(imgDir));
       var stmt = db.prepare("INSERT INTO tiles VALUES (?, ?, ?, ?)");
