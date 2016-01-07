@@ -15,7 +15,7 @@
           height: $(window).height() + 'px'
         });
 
-        $.getJSON("/" + {{tileFile}}, function(data) {
+        $.getJSON("/{{tileFile}}", function(data) {
           console.log(data);
         });
 
