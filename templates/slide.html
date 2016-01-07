@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>{{tileFile}}</title>
+    <link href="/public/leaflet.css" rel="stylesheet"/>
+  </head>
+  <body style="margin:0;">
+    <div id="map"></div>
+    <script src="/public/jquery.min.js"></script>
+    <script src="/public/leaflet.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#map').css({
+          height: $(window).height() + 'px'
+        });
+
+        $.getJSON("/" + {{tileFile}}, function(data) {
+          console.log(data);
+        });
+
+        var map = new L.map('map', {});
+
+        var slideUrl = '/{{tileFile}}/{z}/{x}/{y}'
+
+        slide = L.tileLayer(slideUrl, {
+          minZoom: 0,
+          maxZoom: 8,
+          noWrap: true,
+          attribution: 'Images &copy; 2015 Regents of the University of Minnesota'
+        });
+
+        var southWest = map.unproject([
+          0, 52000
+        ], map.getMaxZoom());
+
+        var northEast = map.unproject([
+          32660, 0
+        ], map.getMaxZoom());
+
+        map.addLayer(slide);
+
+        map.setView(new L.LatLng(0, 0), 2);
+
+        function onMapMove(e) {
+          console.log('Center:' + map.getCenter() + ' Zoom:' + map.getZoom());
+        }
+
+        map.on('moveend', onMapMove);
+      });
+
+      $(window).resize(function() {
+        $('#map').css({
+          height: $(window).height() + 'px'
+        });
+      });
+    </script>
+  </body>
+</html>
