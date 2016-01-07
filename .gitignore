@@ -27,5 +27,5 @@ build/Release
 node_modules
 
 # .wstiles files
-*.wstiles
-*.wstiles-journal
+**/*.wstiles
+**/*.wstiles-journal
