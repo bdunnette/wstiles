@@ -7,25 +7,29 @@ const Glob = require("glob");
 const Path = require('path');
 const FS = require('fs');
 
-const server = new Hapi.Server();
-
 // Set directory to search for .wstiles files
 const tileDir = 'tiles';
 
+// Method to get file path from short name
+// e.g. CMU1SmallRegion -> /home/wstiles/tiles/CMU1SmallRegion.wstiles
 var getTilePath = function(tileFile) {
   return Path.join(__dirname, tileDir, tileFile + '.wstiles');
 }
+
+const server = new Hapi.Server();
 
 server.connection({
   port: 3000
 });
 
+// Enable serving of static files
 server.register(require('inert'), (err) => {
   if (err) {
     throw err;
   }
 });
 
+// Set up template rendering
 server.register(require('vision'), (err) => {
   Hoek.assert(!err, err);
 
@@ -49,15 +53,12 @@ server.route({
   }
 });
 
+// List .wstiles files, returning array of names (without extension)
 server.route({
   method: 'GET',
   path: '/',
   handler: function(request, reply) {
     Glob(tileDir + "/*.wstiles", function(er, files) {
-      // files is an array of filenames.
-      // If the `nonull` option is set, and nothing
-      // was found, then files is ["**/*.js"]
-      // er is an error object or null.
       var shortFiles = files.map(function(val) {
         return val.replace(tileDir + Path.sep, '').replace('.wstiles', '')
       });
@@ -68,6 +69,7 @@ server.route({
   }
 });
 
+// Get metadata from specified file
 server.route({
   method: 'GET',
   path: '/{tileFile}',
@@ -93,6 +95,7 @@ server.route({
   }
 });
 
+// Enable downloading of specified .wstiles file
 server.route({
   method: 'GET',
   path: '/{tileFile}.wstiles',
@@ -101,6 +104,7 @@ server.route({
   }
 });
 
+// Serve a specified image tile from the database
 server.route({
   method: 'GET',
   path: '/{tileFile}/{zoom}/{column}/{row}',
@@ -127,6 +131,7 @@ server.route({
   }
 });
 
+// Index of available files
 server.route({
   method: 'GET',
   path: '/view',
@@ -140,6 +145,7 @@ server.route({
   }
 });
 
+// Leaflet-based slide viewer
 server.route({
   method: 'GET',
   path: '/view/{tileFile}',
