@@ -12,6 +12,10 @@ const server = new Hapi.Server();
 // Set directory to search for .wstiles files
 const tileDir = 'tiles';
 
+var getTilePath = function(tileFile) {
+  return Path.join(__dirname, tileDir, tileFile + '.wstiles');
+}
+
 server.connection({
   port: 3000
 });
@@ -68,7 +72,7 @@ server.route({
   method: 'GET',
   path: '/{tileFile}',
   handler: function(request, reply) {
-    var tileFile = Path.join(__dirname, tileDir, request.params.tileFile + '.wstiles');
+    var tileFile = getTilePath(request.params.tileFile);
     FS.access(tileFile, FS.R_OK, function(err) {
       if (err) {
         reply('File not found').code(404);
@@ -93,7 +97,7 @@ server.route({
   method: 'GET',
   path: '/{tileFile}.wstiles',
   handler: function(request, reply) {
-    reply.file(Path.join(__dirname, tileDir, request.params.tileFile + '.wstiles'));
+    reply.file(getTilePath(request.params.tileFile));
   }
 });
 
@@ -101,7 +105,7 @@ server.route({
   method: 'GET',
   path: '/{tileFile}/{zoom}/{column}/{row}',
   handler: function(request, reply) {
-    var tileFile = Path.join(__dirname, tileDir, request.params.tileFile + '.wstiles');
+    var tileFile = getTilePath(request.params.tileFile);
     FS.access(tileFile, FS.R_OK, function(err) {
       if (err) {
         reply('File not found').code(404);
