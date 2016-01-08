@@ -16,7 +16,7 @@
     <script>
       $.getJSON("/", function(data) {
         data.slides.forEach(function(slide) {
-          $("#slides").append('<li><a href="/view/' + slide + '">' + slide + '</a></li>');
+          $("#slides").append('<li><a href="/view/' + slide + '">' + slide + '</a> <a href="/' + slide + '.wstiles">[download]</a></li>');
         });
       });
     </script>

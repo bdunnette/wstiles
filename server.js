@@ -91,6 +91,14 @@ server.route({
 
 server.route({
   method: 'GET',
+  path: '/{tileFile}.wstiles',
+  handler: function(request, reply) {
+    reply.file(Path.join(__dirname, tileDir, request.params.tileFile + '.wstiles'));
+  }
+});
+
+server.route({
+  method: 'GET',
   path: '/{tileFile}/{zoom}/{column}/{row}',
   handler: function(request, reply) {
     var tileFile = Path.join(__dirname, tileDir, request.params.tileFile + '.wstiles');
