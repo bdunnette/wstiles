@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict';
 
 const Hapi = require('hapi');
@@ -18,8 +19,18 @@ var getTilePath = function(tileFile) {
 
 const server = new Hapi.Server();
 
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP;
+var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+
+if (typeof ipaddress === "undefined") {
+  //  Log errors on OpenShift but continue w/ 127.0.0.1 - this allows us to run/test the app locally.
+  console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
+  ipaddress = "127.0.0.1";
+};
+
 server.connection({
-  port: 3000
+  host: ipaddress,
+  port: port
 });
 
 // Enable serving of static files
@@ -29,34 +40,10 @@ server.register(require('inert'), (err) => {
   }
 });
 
-// Set up template rendering
-server.register(require('vision'), (err) => {
-  Hoek.assert(!err, err);
-
-  server.views({
-    engines: {
-      html: require('handlebars')
-    },
-    relativeTo: __dirname,
-    path: 'templates'
-  });
-});
-
-// 'Public' route for web-accessible files (JQuery, Leaflet)
-server.route({
-  method: 'GET',
-  path: '/public/{param*}',
-  handler: {
-    directory: {
-      path: 'public'
-    }
-  }
-});
-
 // List .wstiles files, returning array of names (without extension)
 server.route({
   method: 'GET',
-  path: '/',
+  path: '/tiles',
   handler: function(request, reply) {
     Glob(tileDir + "/*.wstiles", function(er, files) {
       var shortFiles = files.map(function(val) {
@@ -72,7 +59,7 @@ server.route({
 // Get metadata from specified file
 server.route({
   method: 'GET',
-  path: '/{tileFile}',
+  path: '/tiles/{tileFile}',
   handler: function(request, reply) {
     var tileFile = getTilePath(request.params.tileFile);
     FS.access(tileFile, FS.R_OK, function(err) {
@@ -98,7 +85,7 @@ server.route({
 // Enable downloading of specified .wstiles file
 server.route({
   method: 'GET',
-  path: '/{tileFile}.wstiles',
+  path: '/tiles/{tileFile}.wstiles',
   handler: function(request, reply) {
     reply.file(getTilePath(request.params.tileFile));
   }
@@ -107,7 +94,7 @@ server.route({
 // Serve a specified image tile from the database
 server.route({
   method: 'GET',
-  path: '/{tileFile}/{zoom}/{column}/{row}',
+  path: '/tiles/{tileFile}/{zoom}/{column}/{row}',
   handler: function(request, reply) {
     var tileFile = getTilePath(request.params.tileFile);
     FS.access(tileFile, FS.R_OK, function(err) {
@@ -131,28 +118,14 @@ server.route({
   }
 });
 
-// Index of available files
+// 'Public' route for web-accessible files (JQuery, Leaflet)
 server.route({
   method: 'GET',
-  path: '/view',
+  path: '/{param*}',
   handler: {
-    view: {
-      template: 'index',
-      context: {
-        title: 'Available Slides'
-      }
+    directory: {
+      path: 'public'
     }
-  }
-});
-
-// Leaflet-based slide viewer
-server.route({
-  method: 'GET',
-  path: '/view/{tileFile}',
-  handler: function(request, reply) {
-    reply.view('slide', {
-      tileFile: request.params.tileFile
-    });
   }
 });
 
