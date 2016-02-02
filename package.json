@@ -7,6 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Brian Dunnette <dunn0172@umn.edu>",
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/bdunnette/wstiles.git"
+  },
   "license": "MIT",
   "dependencies": {
     "commander": "^2.9.0",
