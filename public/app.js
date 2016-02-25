@@ -1,12 +1,12 @@
 'use strict';
 
 // Declare app level module which depends on views, and components
-angular.module('myApp', [
+angular.module('wsTiles', [
   'ngRoute',
   'ngResource',
   'leaflet-directive',
-  'myApp.home',
-  'myApp.slide'
+  'wsTiles.home',
+  'wsTiles.slide'
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({

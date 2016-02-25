@@ -1,2 +1,13 @@
 <leaflet class="angular-leaflet-map" tiles="tiles" controls="controls" id="map" defaults="defaults" lf-center="slideCenter" url-hash-center="yes" width="100%"></leaflet>
-<a ng-href="/tiles/{{slideId}}/download">Download {{slide.name}}</a>
+<div class="container-fluid">
+
+<div class="row">
+  <h3>Slide Info</h3>
+<div class="col-lg-2 col-md-3 col-sm-4 slideInfo" ng-repeat="(key, value) in slide">
+  <strong>{{key}}</strong>:
+  {{value}}
+</div>
+</div>
+<a ng-href="/tiles/{{slideId}}/download">Download
+  {{slide.name}}</a>
+</div>
