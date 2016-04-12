@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Brian Dunnette <dunn0172@umn.edu>",
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/bdunnette/wstiles.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bdunnette/wstiles.git"
   },
   "license": "MIT",
   "dependencies": {
@@ -20,9 +20,12 @@
     "good": "^6.4.0",
     "good-console": "^5.3.0",
     "handlebars": "^4.0.5",
-    "hapi": "^12.1.0",
+    "hapi": "^13.3.0",
     "hoek": "^3.0.4",
     "inert": "^3.2.0",
-    "sqlite3": "^3.1.1"
+    "level": "^1.4.0",
+    "level-jobs": "^0.6.0",
+    "sharp": "^0.14.0",
+    "sqlite3": "^3.1.3"
   }
 }
