@@ -3,24 +3,34 @@
 
 <head>
     <title>{{title}}</title>
-    <style>
-        body {
-            font-family: sans-serif;
-        }
-    </style>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 
 <body>
-    <div>
-        <h1>Available Slides:</h1>
+    <div class="container">
+      <div class="page-header">
+                <h2>Whole Slide Images</h2>
+            </div>
+            <div class="row">
+              {{#each slides}}
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="panel panel-default" id="1">
+                        <div class="panel-heading">
+                            <span class="panel-title">
+                                {{this}}
+                            </span>
+                        </div>
+                        <div class="panel-body">
+                            <a href="/slides/{{this}}"><img src="/tiles/{{this}}/0/0/0" class="img-thumbnail">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+              {{/each}}
+            </div>
+
+
     </div>
-    <ul>
-        {{#each slides}}
-        <li>
-            <a href="/slides/{{this}}"><img src="/tiles/{{this}}/0/0/0" alt="{{this}}" /></a>
-        </li>
-        {{/each}}
-    </ul>
 </body>
 
 </html>
