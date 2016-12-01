@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{{slide.name}}</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.2/leaflet.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.2/leaflet.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.2/Control.FullScreen.min.js"></script>
+</head>
+
+<body style="margin:0;">
+    <div id="map"></div>
+    <script>
+        $(document).ready(function() {
+            $('#map').css({
+                height: $(window).height() + 'px'
+            });
+            var map = new L.map('map', {
+                fullscreenControl: true,
+                fullscreenControlOptions: {
+                    position: 'topleft'
+                }
+            });
+            map.attributionControl.setPrefix('');
+
+            var slideUrl = '/tiles/{{slide.name}}/{z}/{x}/{y}'
+            slide = L.tileLayer(slideUrl, {
+                minZoom: {{slide.minzoom}}||0,
+                maxZoom: {{slide.maxzoom}}||8,
+                noWrap: true,
+                attribution: 'Images &copy; 2016 Regents of the University of Minnesota'
+            });
+            map.addLayer(slide);
+
+            map.setView(new L.LatLng(0, 0), 2);
+
+            function onMapMove(e) {
+                console.log('Center:' + map.getCenter() + ' Zoom:' + map.getZoom());
+            }
+
+            map.on('moveend', onMapMove);
+        });
+
+        $(window).resize(function() {
+            $('#map').css({
+                height: $(window).height() + 'px'
+            });
+        });
+    </script>
+</body>
+
+</html>

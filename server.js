@@ -3,6 +3,7 @@
 
 const Hapi = require('hapi');
 const Hoek = require('hoek');
+const Vision = require('vision');
 const Sqlite3 = require('sqlite3').verbose();
 const Glob = require("glob");
 const Path = require('path');
@@ -26,11 +27,55 @@ server.connection({
   port: port
 });
 
-// Enable serving of static files
-server.register(require('inert'), (err) => {
-  if (err) {
-    throw err;
-  }
+const indexHandler = function (request, reply) {
+  Glob(tileDir + "/*.wstiles", function(er, files) {
+    var shortFiles = files.map(function(val) {
+      return val.replace(tileDir + Path.sep, '').replace('.wstiles', '')
+    });
+    reply.view('index', {
+        title: 'WSTiles ' + request.server.version,
+        message: 'Hello World!',
+        slides: shortFiles
+    });
+  })
+};
+
+const slideHandler = function (request, reply) {
+  var tileFile = getTilePath(request.params.tileFile);
+  FS.access(tileFile, FS.R_OK, function(err) {
+    if (err) {
+      reply('File not found').code(404);
+    } else {
+      var db = new Sqlite3.Database(tileFile, Sqlite3.OPEN_READONLY, function(error) {
+        db.all("SELECT * FROM metadata", function(err, rows) {
+          if (rows) {
+            var metadata = {};
+            rows.forEach(function(row) {
+              metadata[row.name] = row.value
+            });
+            console.log(metadata);
+            reply.view('slide', {slide: metadata});
+          }
+        });
+      });
+    }
+  });
+};
+
+server.register(require('vision'), (err) => {
+
+    if (err) {
+        throw err;
+    }
+
+    server.views({
+        engines: { html: require('handlebars') },
+        relativeTo: __dirname,
+        path: 'templates'
+    });
+
+    server.route({ method: 'GET', path: '/slides', handler: indexHandler });
+    server.route({ method: 'GET', path: '/slides/{tileFile}', handler: slideHandler });
 });
 
 // List .wstiles files, returning array of names (without extension)
@@ -108,17 +153,6 @@ server.route({
         });
       }
     });
-  }
-});
-
-// 'Public' route for web-accessible files (JQuery, Leaflet)
-server.route({
-  method: 'GET',
-  path: '/{param*}',
-  handler: {
-    directory: {
-      path: 'public'
-    }
   }
 });
 

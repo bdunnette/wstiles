@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{title}}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>Available Slides:</h1>
+    </div>
+    <ul>
+        {{#each slides}}
+        <li>
+            <a href="/slides/{{this}}"><img src="/tiles/{{this}}/0/0/0" alt="{{this}}" /></a>
+        </li>
+        {{/each}}
+    </ul>
+</body>
+
+</html>
